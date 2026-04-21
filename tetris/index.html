@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тетрис</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        h1 { color: #fff; margin-bottom: 20px; }
+        canvas { border: 3px solid #fff; background: #000; }
+        .score { color: #fff; font-size: 24px; margin-bottom: 10px; }
+        .back { margin-top: 20px; padding: 10px 30px; font-size: 18px; background: #95a5a6; color: white; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>Тетрис</h1>
+    <div class="score">Очки: <span id="score">0</span></div>
+    <canvas id="canvas" width="240" height="400"></canvas>
+    <a href="../index.html" class="back">Назад</a>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const COLS = 10, ROWS = 20, BLOCK = 24;
+        let board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+        let score = 0, x = 4, y = 0, piece = 0, rotate = 0;
+        const shapes = [
+            [[1,1,1,1]],
+            [[1,1],[1,1]],
+            [[1,1,1],[0,1,0]],
+            [[1,1,1],[1,0,0]],
+            [[1,1,1],[0,0,1]],
+            [[1,1],[1,0],[1,0]],
+            [[1,1],[0,1],[0,1]]
+        ];
+        const colors = ['#e74c3c','#3498db','#2ecc71','#f1c40f','#9b59b6','#e67e22','#1abc9c'];
+
+        function rotate(p) { return p[0].map((_,i) => p.map(r=>r[i])).reverse(); }
+        function getPiece() {
+            let p = JSON.parse(JSON.stringify(shapes[piece]));
+            for(let r=0; r<rotate; r++) p = rotate(p);
+            return p;
+        }
+        function draw() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0,0,240,400);
+            for(let r=0;r<ROWS;r++)
+                for(let c=0;c<COLS;c++)
+                    if(board[r][c]) {
+                        ctx.fillStyle = colors[board[r][c]-1];
+                        ctx.fillRect(c*BLOCK+1,r*BLOCK+1,BLOCK-2,BLOCK-2);
+                    }
+            let p = getPiece();
+            ctx.fillStyle = colors[piece];
+            for(let r=0;r<p.length;r++)
+                for(let c=0;c<p[0].length;c++)
+                    if(p[r][c]) ctx.fillRect((x+c)*BLOCK+1,(y+r)*BLOCK+1,BLOCK-2,BLOCK-2);
+        }
+        function valid(px,py,p) {
+            for(let r=0;r<p.length;r++)
+                for(let c=0;c<p[0].length;c++)
+                    if(p[r][c]) {
+                        let nx=px+c, ny=py+r;
+                        if(nx<0||nx>=COLS||ny>=ROWS||board[ny][nx]) return false;
+                    }
+            return true;
+        }
+        function clearLines() {
+            for(let r=ROWS-1;r>=0;r--) {
+                if(board[r].every(c=>c)) {
+                    board.splice(r,1);
+                    board.unshift(Array(COLS).fill(0));
+                    score += 100;
+                    scoreEl.textContent = score;
+                    r++;
+                }
+            }
+        }
+        function newPiece() { x=4; y=0; piece=Math.floor(Math.random()*7); rotate=0; }
+        function update() {
+            let p = getPiece();
+            if(valid(x,y+1,p)) y++;
+            else {
+                for(let r=0;r<p.length;r++)
+                    for(let c=0;c<p[0].length;c++)
+                        if(p[r][c]) board[y+r][x+c] = piece+1;
+                clearLines();
+                newPiece();
+                if(!valid(x,y,getPiece())) { board=Array(ROWS).fill(()=>Array(COLS).fill(0)); score=0; scoreEl.textContent=0; }
+            }
+            draw();
+        }
+        let gameInterval;
+        document.addEventListener('keydown',e=>{
+            let p = getPiece();
+            if(e.key==='ArrowLeft'&&valid(x-1,y,p)) { x--; draw(); }
+            else if(e.key==='ArrowRight'&&valid(x+1,y,p)) { x++; draw(); }
+            else if(e.key==='ArrowDown'&&valid(x,y+1,p)) { y++; draw(); }
+            else if(e.key==='ArrowUp') { 
+                let r=(rotate+1)%4;
+                let rotated = getPiece();
+                for(let i=0;i<r;i++) rotated = rotate(rotated);
+                if(valid(x,y,rotated)) {
+                    rotate = r;
+                    draw();
+                }
+            }
+        });
+        newPiece();
+        draw();
+        gameInterval = setInterval(update,300);
+    </script>
+</body>
+</html>
