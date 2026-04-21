@@ -397,6 +397,20 @@
             resetBall();
         }
         
+        canvas.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            paddle.x = Math.max(0, Math.min(canvas.width - paddle.w, mouseX - paddle.w / 2));
+        });
+        
+        canvas.addEventListener('click', () => {
+            if(isPaused) {
+                isPaused = false;
+                document.getElementById('pauseOverlay').classList.remove('active');
+                update();
+            }
+        });
+        
         const keys = {};
         
         document.addEventListener('keydown', e => {
