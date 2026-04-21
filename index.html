@@ -5,42 +5,189 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Игры</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: Arial, sans-serif;
-            background: #1a1a2e;
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow: hidden;
         }
-        h1 { color: #fff; margin-bottom: 30px; }
-        .menu { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255,0,100,0.15) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(0,200,255,0.15) 0%, transparent 30%),
+                radial-gradient(circle at 50% 50%, rgba(150,0,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        h1 {
+            color: #fff;
+            font-size: 36px;
+            margin-bottom: 15px;
+            text-shadow: 
+                0 0 10px #f0f,
+                0 0 20px #f0f,
+                0 0 40px #f0f,
+                0 0 80px #0ff;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+            z-index: 1;
+        }
+        
+        @keyframes titleGlow {
+            from { 
+                text-shadow: 
+                    0 0 10px #f0f,
+                    0 0 20px #f0f,
+                    0 0 40px #f0f;
+            }
+            to { 
+                text-shadow: 
+                    0 0 20px #0ff,
+                    0 0 40px #0ff,
+                    0 0 80px #0ff,
+                    0 0 100px #0ff;
+            }
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            margin-bottom: 50px;
+            z-index: 1;
+        }
+        
+        .menu {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 1;
+        }
+        
         .game-btn {
-            padding: 20px 40px;
-            font-size: 24px;
+            padding: 30px 50px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: transform 0.2s;
-            font-weight: bold;
+            transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
+            position: relative;
+            overflow: hidden;
         }
-        .game-btn:hover { transform: scale(1.1); }
-        .btn-tetris { background: #e74c3c; color: white; }
-        .btn-arkanoid { background: #3498db; color: white; }
-        .btn-snake { background: #2ecc71; color: white; }
+        
+        .game-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .game-btn:hover::before {
+            left: 100%;
+        }
+        
+        .game-btn:hover {
+            transform: translateY(-10px) scale(1.05);
+        }
+        
+        .btn-tetris {
+            background: linear-gradient(180deg, #e74c3c, #c0392b);
+            color: white;
+            box-shadow: 
+                0 10px 30px rgba(231,76,60,0.5),
+                0 0 30px rgba(231,76,60,0.3),
+                inset 0 -5px 0 rgba(0,0,0,0.2);
+        }
+        
+        .btn-tetris:hover {
+            box-shadow: 
+                0 15px 40px rgba(231,76,60,0.6),
+                0 0 50px rgba(231,76,60,0.4);
+        }
+        
+        .btn-arkanoid {
+            background: linear-gradient(180deg, #3498db, #2980b9);
+            color: white;
+            box-shadow: 
+                0 10px 30px rgba(52,152,219,0.5),
+                0 0 30px rgba(52,152,219,0.3),
+                inset 0 -5px 0 rgba(0,0,0,0.2);
+        }
+        
+        .btn-arkanoid:hover {
+            box-shadow: 
+                0 15px 40px rgba(52,152,219,0.6),
+                0 0 50px rgba(52,152,219,0.4);
+        }
+        
+        .btn-snake {
+            background: linear-gradient(180deg, #2ecc71, #27ae60);
+            color: white;
+            box-shadow: 
+                0 10px 30px rgba(46,204,113,0.5),
+                0 0 30px rgba(46,204,113,0.3),
+                inset 0 -5px 0 rgba(0,0,0,0.2);
+        }
+        
+        .btn-snake:hover {
+            box-shadow: 
+                0 15px 40px rgba(46,204,113,0.6),
+                0 0 50px rgba(46,204,113,0.4);
+        }
+        
+        .game-icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 15px;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            color: rgba(255,255,255,0.3);
+            font-size: 8px;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
-    <h1>Выбери игру</h1>
+    <h1>РЕТРО ИГРЫ</h1>
+    <p class="subtitle">Выбери свою игру</p>
+    
     <div class="menu">
-        <a href="tetris/index.html" class="game-btn btn-tetris">Тетрис</a>
-        <a href="arkanoid/index.html" class="game-btn btn-arkanoid">Арканоид</a>
-        <a href="snake/index.html" class="game-btn btn-snake">Змейка</a>
+        <a href="tetris/index.html" class="game-btn btn-tetris">
+            <span class="game-icon">🧱</span>
+            ТЕТРИС
+        </a>
+        <a href="arkanoid/index.html" class="game-btn btn-arkanoid">
+            <span class="game-icon">🎾</span>
+            АРКАНОИД
+        </a>
+        <a href="snake/index.html" class="game-btn btn-snake">
+            <span class="game-icon">🐍</span>
+            ЗМЕЙКА
+        </a>
     </div>
+    
+    <p class="footer">Нажми на кнопку чтобы играть</p>
 </body>
 </html>
